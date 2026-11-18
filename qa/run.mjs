@@ -531,6 +531,9 @@ try {
   check("記録に constructor などの鍵が入っても、まなび帳と実績の種類に数えない（CodeRabbit funka-level#1）", (await q.textContent("#go-dex")).includes("1/30") && await q.evaluate(() => __nm.tally(__nm.load()).kinds) === 1, await q.textContent("#go-dex"));
   await q.evaluate(() => { localStorage.setItem("snr-v1", JSON.stringify({ v: 1, tut: true, days: {}, hdays: {}, adays: {}, dex: {}, runs: {}, kofi: {}, ach: {}, ebest: { toString: null } })); }); await q.reload(); await q.waitForTimeout(150);
   check("記録の数の所に数でも文字でもない物（{toString:null}）が入っても、ホームが出る（toppu-yomi #1 の CodeRabbit）", await q.locator("#go-dex").count() === 1);
+  await q.evaluate(() => { localStorage.setItem("snr-v1", JSON.stringify({ v: 1, tut: true, t: { toString: null, valueOf: null }, days: {}, hdays: {}, adays: {}, dex: {}, runs: {}, kofi: {}, ach: {}, ebest: 0 })); }); await q.reload(); await q.waitForTimeout(150);
+  { const ok = await q.evaluate(() => { try { __nm.save((s) => { s.ebest = 1; }); return typeof __nm.load().t === "number"; } catch (e) { return String(e); } });
+    check("保存の時刻 t に数でない物（{toString:null}）が入っても、保存できる（seinen-nenrei #1 の CodeRabbit）", ok === true, ok); }
   await q.close(); }
 { const bad = G.KINDS.filter((k) => { for (let i = 0; i < 200; i++) { const P = G.make(`${k.id}|g${i}`); if (/^[a-z]+(17|18|19|20)$/.test(k.id) ? !G.GROUPS[P.grp] : P.grp) return true; } return false; }).map((k) => k.id), used = new Set(G.KINDS.map((k) => k.grp).filter(Boolean));
   check("2段目「どの決まり？」：したいことの問題はどれも4つ（契約・資格とパスポート・結婚と養子・お酒たばこと公営競技）のどれかで、4つとも使う。しくみの問題には2段目が無い", bad.length === 0 && Object.keys(G.GROUPS).join() === "keiyaku,shikaku,kazoku,kenko" && used.size === 4, bad.join(",")); }
