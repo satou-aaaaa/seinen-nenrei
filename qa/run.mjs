@@ -15,7 +15,7 @@ import { checkDepth } from "./depth-check.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const results = [];
 const check = (name, ok, detail = "") => results.push({ name, ok: !!ok, detail: String(detail).slice(0, 400) });
-const firstClose = async (q) => { if (await q.locator("#howto[open]").count()) await q.click("#howto-ok"); if (await q.locator("#core-coach").count()) { await q.evaluate(() => Core.coach.leave()); await q.waitForTimeout(100); } }; // はじめての練習の吹き出しをやめてホームへ（sync-template の migrateFirstQa が足した）
+const firstClose = async (q) => { if (await q.locator("#howto[open]").count()) await q.click("#howto-ok"); if (await q.evaluate(() => !!(window.Core && Core.coach && Core.coach.active()))) { await q.evaluate(() => { Core.coach.leave(); scrollTo(0, 0); }); await q.waitForTimeout(100); } }; // はじめての練習の吹き出しをやめてホームへ（sync-template の migrateFirstQa が足した）
 const G = createRequire(import.meta.url)(path.join(root, "data.js"));
 
 const PINS = "188:2:0.1,nensei:0:0.3,torikeshi:0:1.4.2,keiba19:4:0,keiba20:7:1,yoshi19:4:0,yoiku:1:1.4.2,card19:4:1;188:0:0.1,nensei:2:3.0,josei:0:1.0.3,doui:1:1.0.2,shiho19:7:0,riyu:1:2.3.0,kyotei18:7:0,heya17:1:0;nensei:2:2.0,sumaho19:3:0,keiba19:2:1,kekkon18:3:0,keiba20:1:1,card19:4:1,yoshi19:1:1,heya17:3:1"; // 過去の日の問題の印（変わったら過去の日の問題が変わった印。種類・言い方は足すだけでも変わる）
